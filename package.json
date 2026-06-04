@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "build:pages": "npm run build && node scripts/prepare-pages.mjs",
+    "preview": "vite preview",
+    "preview:pages": "npm run build:pages && npx --yes serve out -l 4173"
   },
   "dependencies": {
     "react": "^18.3.1",
