@@ -38,6 +38,7 @@ jobs:
           test -f out/.nojekyll
           test -f out/Portfolio/index.html
           test -f out/Portfolio/404.html
+          test -f out/eileen/35/index.html
           echo "Deployed files:"
           find out -type f | sort
 

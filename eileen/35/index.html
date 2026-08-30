@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="The Long Mystery — eleven short poems and an unwritten postscript, left by Eileen for two readers."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#eeeadf" />
+    <title>The Long Mystery — The Unwritten Postscript</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#reading-panel">Skip to the manuscript</a>
+
+    <div class="page">
+      <header class="masthead" aria-label="Manuscript heading">
+        <p class="archive-mark" aria-label="Eileen manuscript 35">E. / MS. 35</p>
+        <div class="publication-title">
+          <p>The Long Mystery</p>
+          <span>Eleven Short Poems and an Unwritten Postscript</span>
+        </div>
+        <p class="copy-mark">Private copy · undated</p>
+      </header>
+
+      <div class="archive-shell" id="archive-shell">
+        <nav class="chapter-index" aria-label="Manuscript contents">
+          <div class="column-heading">
+            <span>Contents</span>
+            <span aria-hidden="true">§</span>
+          </div>
+          <div class="chapter-list" id="chapter-list"></div>
+        </nav>
+
+        <main class="reading-panel" id="reading-panel" tabindex="-1"></main>
+
+        <aside class="poem-shelf" aria-labelledby="shelf-title">
+          <div class="column-heading">
+            <span id="shelf-title">The manuscript</span>
+            <span id="shelf-range" aria-hidden="true">—</span>
+          </div>
+          <div id="shelf-content"></div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="visually-hidden" id="reading-status" role="status" aria-live="polite"></div>
+    <noscript>
+      <p class="noscript-note">This manuscript requires JavaScript to arrange its pages.</p>
+    </noscript>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
