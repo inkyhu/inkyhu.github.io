@@ -8,13 +8,10 @@ export const manuscript = {
     salutation: "To my two friends, who seem a little less far away now:",
     paragraphs: [
       "You found it.",
-      "I ought to confess that the manuscript is not a novel. It is only a small collection of poems. The long mystery was everything I placed between you and these pages.",
-      "A book is usually finished before it meets its reader. I wanted to know whether one might be completed by being read: one reader among my objects, another among my papers, and two voices carrying what neither possessed alone.",
-      "The numbers were only hinges. The doors were never the important part.",
-      "What follows is the portion I could write by myself. The final poem, however, still requires the two of you. One half is waiting on the page in your hands. The other is here, in the light."
+      "The manuscript is not a novel, as you may have expected, but a small collection of poems. This is not an evasion. The poems are real, and the mystery surrounding them is real as well.",
+      "Read them first."
     ],
-    cueLines: ["Let the paper speak first.", "Let the light answer."],
-    closing: "And then, at last, I shall have my ending.",
+    cueLines: ["The last page will explain why I required two readers to reach the first."],
     signature: "— Eileen"
   },
   chapters: [
@@ -256,14 +253,107 @@ export const manuscript = {
     id: "coda",
     indexLabel: "Coda",
     title: "The Unwritten Postscript",
-    archiveLabel: "Final leaf · divided copy",
-    instruction: "Ask the reader holding the final sealed letter to open it. Read in alternation: the paper begins each pair; the light answers.",
-    cue: "Let the paper speak first.",
-    digitalLines: [
-      "the objects continued quietly.",
-      "a bird slept inside a sheet of paper.",
-      "Two voices were needed for that.",
-      "was written between you."
-    ]
+    archiveLabel: "Final leaf · complete copy",
+    salutation: "To my two friends—",
+    blocks: [
+      {
+        type: "paragraph",
+        text: "You have reached the manuscript."
+      },
+      {
+        type: "paragraph",
+        text: "It is, I confess, a modest object: eleven short poems, hardly enough paper to justify a locked bookcase. If either of you expected an unpublished masterpiece, you may lodge a complaint with the author. I shall give it the solemn attention such complaints deserve."
+      },
+      {
+        type: "paragraph",
+        text: "But the poems are real, and they are yours to read. They are the manuscript I promised."
+      },
+      {
+        type: "pivot",
+        text: "The long mystery was the way I asked you to reach them."
+      },
+      {
+        type: "paragraph",
+        text: "I have always preferred a mystery that leaves behind more than an answer. An answer closes a question. A good mystery alters the way one looks at an ordinary thing."
+      },
+      {
+        type: "paragraph",
+        text: "A record is no longer only music. A clock keeps more than time. A ticket may remember its departure after its destination has been rubbed away. A sheet of paper may contain a bird, provided another voice knows where it should be folded."
+      },
+      {
+        type: "pivot",
+        text: "So I made a book that began before its first page."
+      },
+      {
+        type: "paragraph",
+        text: "One of you stood among my objects. The other kept watch over my papers. Neither possessed enough, which meant that each had to borrow the other’s attention."
+      },
+      {
+        type: "paragraph",
+        text: "You described, misheard, corrected, waited, and tried again. The numbers mattered, of course—but only because of what you had to give one another before they would appear."
+      },
+      {
+        type: "pivot",
+        text: "That was the part I could not write alone."
+      },
+      {
+        type: "paragraph",
+        text: "I could arrange the room. I could leave the papers. I could write these eleven poems. But I could not decide the exact words one of you would use for a mark, or how long the other would remain silent before understanding. I could not write the laugh after a wrong answer, or the small change in a voice when a guess became certain."
+      },
+      {
+        type: "paragraph",
+        text: "Those sentences existed only while passing between you. No archive could preserve them faithfully. This page least of all."
+      },
+      {
+        type: "paragraph",
+        text: "Perhaps that is why I called it unwritten. Not because nothing was here, and not because I had neglected my ending. I simply left room for two readers inside it."
+      },
+      {
+        type: "closing",
+        text: "So yes: you found my manuscript."
+      },
+      {
+        type: "closing",
+        text: "And, with admirable thoroughness, my dear completionists, you also completed the mystery around it."
+      },
+      {
+        type: "closing",
+        text: "I supplied the pages."
+      },
+      {
+        type: "closing",
+        text: "You made the distance between them readable."
+      },
+      {
+        type: "final",
+        text: "That will do very nicely for an ending."
+      }
+    ],
+    signature: "— Eileen",
+    shelfNote: "A complete final leaf: the part Eileen could write, and the space she left for two readers."
+  },
+  physicalNote: {
+    title: "For the reader holding the paper—",
+    instruction: "Please read this aloud.",
+    paragraphs: [
+      "A final correction.",
+      "I did consider hiding half an ending in this envelope. It would have been clever. It would also have been rather tiresome.",
+      "There is no missing line here. You have already spent quite long enough putting my sentences back together.",
+      "Keep this letter as evidence that the manuscript was read as intended: not by one brilliant reader, but by two patient ones."
+    ],
+    closing: "With my thanks—and no further clues,",
+    signature: "Eileen",
+    developmentStatus: "working-draft"
+  },
+  creatorNote: {
+    id: "outside-the-manuscript",
+    title: "Outside the manuscript",
+    label: "A note from the maker",
+    paragraphs: [
+      "I made The Unwritten Postscript because I love literary puzzles in which objects are not merely clues, but ways of reading.",
+      "I wanted two people to hold different parts of the same story—and to discover that describing, listening, waiting, and correcting one another could become the story itself.",
+      "Eileen’s manuscript is fictional. The conversation that completes it is not."
+    ],
+    signature: "— Inky"
   }
 };

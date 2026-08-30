@@ -149,7 +149,7 @@ function renderNavigation() {
     buildIndexButton({
       number: "C",
       title: `${manuscript.coda.indexLabel}. ${manuscript.coda.title}`,
-      subtitle: "Divided copy",
+      subtitle: "Final page",
       selected: state.view === "coda",
       disabled: !state.unlocked,
       onSelect: () => selectCoda()
@@ -188,7 +188,8 @@ function renderLetter() {
 
   const cues = createElement("div", "letter-cues");
   letter.cueLines.forEach((line) => cues.append(createElement("p", "", line)));
-  body.append(cues, createElement("p", "letter-closing", letter.closing));
+  body.append(cues);
+  if (letter.closing) body.append(createElement("p", "letter-closing", letter.closing));
 
   const signature = createElement("p", "signature", letter.signature);
   body.append(signature);
@@ -258,7 +259,7 @@ function renderPoem() {
 }
 
 function renderCoda() {
-  const { coda } = manuscript;
+  const { coda, creatorNote } = manuscript;
   const article = createElement("article", "document coda-document reading-enter");
   article.append(createElement("p", "document-meta", coda.archiveLabel));
 
@@ -266,29 +267,45 @@ function renderCoda() {
   heading.append(createElement("span", "coda-prefix", "Coda"));
   heading.append(document.createTextNode(coda.title));
   article.append(heading);
-  article.append(createElement("p", "coda-instruction", coda.instruction));
-  article.append(createElement("p", "coda-cue", coda.cue));
 
-  const turns = createElement("ol", "coda-turns");
-  turns.setAttribute("aria-label", "The lines held by the light");
-  coda.digitalLines.forEach((line, index) => {
-    const turn = createElement("li", "coda-turn");
-    turn.style.setProperty("--turn", index);
-
-    const paperPause = createElement("div", "paper-pause");
-    paperPause.setAttribute("aria-hidden", "true");
-    paperPause.append(createElement("span", "", `paper · ${String(index + 1).padStart(2, "0")}`));
-
-    const lightLabel = createElement(
-      "span",
-      "light-label",
-      `light answers · ${String(index + 1).padStart(2, "0")}`
-    );
-    const lightLine = createElement("p", "light-line", line);
-    turn.append(paperPause, lightLabel, lightLine);
-    turns.append(turn);
+  const codaBody = createElement("div", "coda-body");
+  codaBody.append(createElement("p", "coda-salutation", coda.salutation));
+  coda.blocks.forEach((block) => {
+    codaBody.append(createElement("p", `coda-block coda-block--${block.type}`, block.text));
   });
-  article.append(turns);
+  codaBody.append(createElement("p", "coda-signature", coda.signature));
+  article.append(codaBody);
+
+  const outside = document.createElement("details");
+  outside.className = "creator-note";
+  outside.id = creatorNote.id;
+
+  const summary = document.createElement("summary");
+  const summaryCopy = createElement("span", "creator-note-summary");
+  summaryCopy.append(
+    createElement("span", "creator-note-title", creatorNote.title),
+    createElement("span", "creator-note-label", creatorNote.label)
+  );
+  summary.append(summaryCopy, createElement("span", "creator-note-marker", "+"));
+
+  const creatorBody = createElement("div", "creator-note-body");
+  creatorNote.paragraphs.forEach((paragraph) => {
+    creatorBody.append(createElement("p", "", paragraph));
+  });
+  creatorBody.append(createElement("p", "creator-note-signature", creatorNote.signature));
+  outside.append(summary, creatorBody);
+  const creatorNoteLinked = decodeURIComponent(window.location.hash.slice(1)) === creatorNote.id;
+  outside.open = creatorNoteLinked;
+  outside.addEventListener("toggle", () => {
+    const marker = outside.querySelector(".creator-note-marker");
+    marker.textContent = outside.open ? "−" : "+";
+    updateHash(outside.open ? creatorNote.id : "coda");
+    setReadingStatus(outside.open ? "Creator’s note opened." : "Creator’s note closed.");
+  });
+  article.append(outside);
+  if (creatorNoteLinked) {
+    window.requestAnimationFrame(() => outside.scrollIntoView({ block: "start" }));
+  }
 
   const sequence = createElement("nav", "reading-sequence");
   sequence.setAttribute("aria-label", "Move through the manuscript");
@@ -360,7 +377,7 @@ function renderShelf() {
     shelfTitle.textContent = "The manuscript";
     shelfRange.textContent = "01—11";
     const ready = createElement("div", "shelf-note shelf-note--ready");
-    ready.append(createElement("p", "", "Three gatherings. Eleven short poems. One divided final leaf."));
+    ready.append(createElement("p", "", "Three gatherings. Eleven short poems. One final postscript."));
     const begin = createElement("button", "begin-link", "Begin with chapter I →");
     begin.type = "button";
     begin.addEventListener("click", () => selectChapter(manuscript.chapters[0].id));
@@ -371,11 +388,11 @@ function renderShelf() {
 
   if (state.view === "coda") {
     shelfTitle.textContent = "Final leaf";
-    shelfRange.textContent = "divided";
+    shelfRange.textContent = "complete";
     const finalNote = createElement("div", "shelf-note shelf-note--coda");
     finalNote.append(
-      createElement("p", "", "This copy contains only the lines held by the light."),
-      createElement("small", "", "The complete postscript exists only while it is read together.")
+      createElement("p", "", manuscript.coda.shelfNote),
+      createElement("small", "", "A note from the maker waits beyond Eileen’s signature.")
     );
     shelfContent.append(finalNote);
     return;
@@ -432,7 +449,7 @@ function restoreLinkedPage() {
     document.body.classList.add("manuscript-open");
   }
 
-  if (target === "coda") {
+  if (target === "coda" || target === manuscript.creatorNote.id) {
     state.unlocked = true;
     state.view = "coda";
     document.body.classList.add("manuscript-open");

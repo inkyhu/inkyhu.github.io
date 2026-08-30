@@ -10,7 +10,6 @@
   --line-soft: rgba(48, 47, 41, 0.1);
   --moss: #667166;
   --wine: #734c50;
-  --blue: #68747b;
   --serif: "Iowan Old Style", "Baskerville", "Libre Baskerville", "Times New Roman", serif;
   --sans: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
 }
@@ -492,70 +491,118 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
-.coda-instruction {
-  max-width: 31rem;
-  margin: 2rem 0 0;
-  color: var(--ink-soft);
-  font-size: 0.96rem;
-  line-height: 1.7;
+.coda-body {
+  max-width: 35rem;
+  margin: clamp(3.5rem, 8vh, 5.5rem) 0 0 clamp(0rem, 4vw, 3rem);
+  font-size: clamp(1rem, 1.3vw, 1.08rem);
+  line-height: 1.78;
 }
 
-.coda-cue {
-  margin: 3.5rem 0 0;
-  padding-left: 1rem;
-  border-left: 1px solid var(--wine);
+.coda-salutation {
+  margin: 0 0 2.5rem;
   font-size: 1.18rem;
   font-style: italic;
 }
 
-.coda-turns {
-  max-width: 35rem;
-  margin: 1rem 0 7rem;
-  padding: 0;
+.coda-block {
+  margin: 0 0 1.45rem;
+}
+
+.coda-block--pivot {
+  margin: 2.7rem 0;
+  padding-left: 1.15rem;
+  border-left: 1px solid var(--wine);
+  font-size: 1.13rem;
+  font-style: italic;
+}
+
+.coda-block--closing {
+  margin-bottom: 0.75rem;
+}
+
+.coda-block--closing + .coda-block--closing {
+  margin-top: 0;
+}
+
+.coda-block--final {
+  margin: 2.4rem 0 0;
+  font-size: 1.13rem;
+  font-style: italic;
+}
+
+.coda-signature {
+  margin: 2.8rem 0 0;
+  color: var(--ink-soft);
+  font-size: 1.18rem;
+  font-style: italic;
+  text-align: right;
+}
+
+.creator-note {
+  margin: clamp(6rem, 14vh, 10rem) 0 5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.creator-note summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 0;
+  cursor: pointer;
   list-style: none;
 }
 
-.coda-turn {
-  opacity: 0;
-  animation: revealLine 520ms ease forwards;
-  animation-delay: calc(180ms + var(--turn) * 180ms);
+.creator-note summary::-webkit-details-marker {
+  display: none;
 }
 
-.paper-pause {
-  height: clamp(5.6rem, 11vh, 8rem);
-  display: flex;
-  align-items: end;
-  color: rgba(88, 87, 79, 0.48);
-  border-bottom: 1px dotted rgba(88, 87, 79, 0.3);
-  font-family: var(--sans);
-  font-size: 0.5rem;
-  letter-spacing: 0.11em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.paper-pause span {
-  position: relative;
-  bottom: -0.16rem;
-  padding-right: 0.45rem;
-  background: var(--paper);
-}
-
-.light-label {
+.creator-note-summary,
+.creator-note-title,
+.creator-note-label {
   display: block;
-  margin-top: 1.2rem;
-  color: var(--blue);
+}
+
+.creator-note-title {
   font-family: var(--sans);
-  font-size: 0.5rem;
-  letter-spacing: 0.11em;
+  font-size: 0.63rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.light-line {
-  margin: 0.25rem 0 1rem;
-  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+.creator-note-label {
+  margin-top: 0.18rem;
+  color: var(--ink-faint);
+  font-size: 0.76rem;
   font-style: italic;
-  line-height: 1.55;
+}
+
+.creator-note-marker {
+  color: var(--wine);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.creator-note-body {
+  max-width: 32rem;
+  padding: 1.5rem 0 2.8rem clamp(0rem, 4vw, 3rem);
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  line-height: 1.72;
+}
+
+.creator-note-body p {
+  margin: 0 0 1.2rem;
+}
+
+.creator-note-body .creator-note-signature {
+  margin: 2rem 0 0;
+  color: var(--ink);
+  font-style: italic;
+  text-align: right;
 }
 
 .shelf-note {
@@ -735,17 +782,6 @@ a:focus-visible {
   from {
     opacity: 0;
     transform: translateY(0.45rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes revealLine {
-  from {
-    opacity: 0;
-    transform: translateY(0.35rem);
   }
   to {
     opacity: 1;
@@ -940,9 +976,6 @@ a:focus-visible {
     grid-template-columns: 5.5rem minmax(0, 1fr);
   }
 
-  .paper-pause {
-    height: 5.5rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -959,9 +992,6 @@ a:focus-visible {
     transition-duration: 0.01ms !important;
   }
 
-  .coda-turn {
-    opacity: 1;
-  }
 }
 
 @media (prefers-contrast: more) {
