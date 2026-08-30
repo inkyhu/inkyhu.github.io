@@ -1,4 +1,4 @@
-import { manuscript } from "./data/poems.js";
+import { getManuscript, uiCopy } from "./data/poems.js";
 
 const chapterList = document.querySelector("#chapter-list");
 const readingPanel = document.querySelector("#reading-panel");
@@ -6,13 +6,84 @@ const shelfContent = document.querySelector("#shelf-content");
 const shelfTitle = document.querySelector("#shelf-title");
 const shelfRange = document.querySelector("#shelf-range");
 const readingStatus = document.querySelector("#reading-status");
+const skipLink = document.querySelector("#skip-link");
+const masthead = document.querySelector("#masthead");
+const archiveMark = document.querySelector("#archive-mark");
+const publicationTitle = document.querySelector("#publication-title");
+const publicationSubtitle = document.querySelector("#publication-subtitle");
+const copyMark = document.querySelector("#copy-mark");
+const contentsLabel = document.querySelector("#contents-label");
+const chapterIndex = document.querySelector("#chapter-index");
+const languageSwitch = document.querySelector("#language-switch");
+const languageButtons = [...document.querySelectorAll("[data-language]")];
+const descriptionMeta = document.querySelector('meta[name="description"]');
+
+const requestedLanguage = new URLSearchParams(window.location.search).get("lang");
+const initialLanguage = requestedLanguage === "zh" ? "zh" : "en";
+let manuscript = getManuscript(initialLanguage);
 
 const state = {
+  language: initialLanguage,
   unlocked: false,
   view: "letter",
   activeChapter: manuscript.chapters[0].id,
   activePoem: manuscript.poems[0].id
 };
+
+function interfaceText() {
+  return uiCopy[state.language];
+}
+
+function formatText(template, values) {
+  return Object.entries(values).reduce(
+    (result, [key, value]) => result.replace(`{${key}}`, value),
+    template
+  );
+}
+
+function applyLanguageChrome() {
+  const ui = interfaceText();
+  document.documentElement.lang = ui.lang;
+  document.title = ui.pageTitle;
+  descriptionMeta.content = ui.pageDescription;
+  document.body.classList.toggle("language-zh", state.language === "zh");
+
+  skipLink.textContent = ui.skipLink;
+  masthead.setAttribute("aria-label", ui.mastheadLabel);
+  archiveMark.setAttribute("aria-label", ui.archiveMarkLabel);
+  publicationTitle.textContent = manuscript.title;
+  publicationSubtitle.textContent = manuscript.subtitle;
+  copyMark.textContent = ui.copyMark;
+  contentsLabel.textContent = ui.contents;
+  chapterIndex.setAttribute("aria-label", ui.contentsLabel);
+  languageSwitch.setAttribute("aria-label", ui.languageLabel);
+
+  languageButtons.forEach((button) => {
+    const language = button.dataset.language;
+    button.setAttribute("aria-pressed", String(language === state.language));
+    button.setAttribute(
+      "aria-label",
+      language === "en" ? ui.switchToEnglish : ui.switchToChinese
+    );
+  });
+}
+
+function setLanguage(language) {
+  if (!uiCopy[language] || language === state.language) return;
+
+  state.language = language;
+  manuscript = getManuscript(language);
+  const url = new URL(window.location.href);
+  if (language === "zh") {
+    url.searchParams.set("lang", "zh");
+  } else {
+    url.searchParams.delete("lang");
+  }
+  window.history.replaceState(null, "", url);
+  applyLanguageChrome();
+  render();
+  setReadingStatus(interfaceText().languageChanged);
+}
 
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
@@ -41,7 +112,9 @@ function setReadingStatus(message) {
 }
 
 function updateHash(value) {
-  window.history.replaceState(null, "", `#${value}`);
+  const url = new URL(window.location.href);
+  url.hash = value;
+  window.history.replaceState(null, "", url);
 }
 
 function focusReading() {
@@ -54,7 +127,7 @@ function selectLetter(shouldFocus = true) {
   state.view = "letter";
   render();
   updateHash("letter");
-  setReadingStatus("Letter from Eileen selected.");
+  setReadingStatus(interfaceText().letterSelected);
   if (shouldFocus) focusReading();
 }
 
@@ -67,7 +140,9 @@ function selectChapter(chapterId, shouldFocus = true) {
   state.activePoem = poems[0].id;
   render();
   updateHash(state.activePoem);
-  setReadingStatus(`${poems[0].title} selected.`);
+  setReadingStatus(
+    formatText(interfaceText().selectedTemplate, { title: poems[0].title })
+  );
   if (shouldFocus) focusReading();
 }
 
@@ -80,7 +155,7 @@ function selectPoem(poemId, shouldFocus = true) {
   state.activePoem = poem.id;
   render();
   updateHash(poem.id);
-  setReadingStatus(`${poem.title} selected.`);
+  setReadingStatus(formatText(interfaceText().selectedTemplate, { title: poem.title }));
   if (shouldFocus) focusReading();
 }
 
@@ -90,7 +165,7 @@ function selectCoda(shouldFocus = true) {
   state.view = "coda";
   render();
   updateHash("coda");
-  setReadingStatus("Coda: The Unwritten Postscript selected.");
+  setReadingStatus(interfaceText().codaSelected);
   if (shouldFocus) focusReading();
 }
 
@@ -98,7 +173,7 @@ function unlockManuscript() {
   state.unlocked = true;
   document.body.classList.add("manuscript-open");
   render();
-  setReadingStatus("The manuscript is open. Three chapters and the coda are now available.");
+  setReadingStatus(interfaceText().manuscriptUnlocked);
 }
 
 function buildIndexButton({ number, title, subtitle, selected, disabled, onSelect }) {
@@ -120,12 +195,13 @@ function buildIndexButton({ number, title, subtitle, selected, disabled, onSelec
 }
 
 function renderNavigation() {
+  const ui = interfaceText();
   chapterList.replaceChildren();
   chapterList.append(
     buildIndexButton({
       number: "—",
       title: manuscript.letter.indexLabel,
-      subtitle: "For two readers",
+      subtitle: ui.forTwoReaders,
       selected: state.view === "letter",
       disabled: false,
       onSelect: () => selectLetter()
@@ -148,8 +224,8 @@ function renderNavigation() {
   chapterList.append(
     buildIndexButton({
       number: "C",
-      title: `${manuscript.coda.indexLabel}. ${manuscript.coda.title}`,
-      subtitle: "Final page",
+      title: `${manuscript.coda.indexLabel}${ui.titleSeparator}${manuscript.coda.title}`,
+      subtitle: ui.finalPage,
       selected: state.view === "coda",
       disabled: !state.unlocked,
       onSelect: () => selectCoda()
@@ -178,6 +254,7 @@ function appendPoemLines(container, lines) {
 
 function renderLetter() {
   const { letter } = manuscript;
+  const ui = interfaceText();
   const article = createElement("article", "document letter-document reading-enter");
 
   article.append(createElement("p", "document-meta", letter.archiveLabel));
@@ -185,10 +262,6 @@ function renderLetter() {
 
   const body = createElement("div", "letter-body");
   letter.paragraphs.forEach((paragraph) => body.append(createElement("p", "", paragraph)));
-
-  const cues = createElement("div", "letter-cues");
-  letter.cueLines.forEach((line) => cues.append(createElement("p", "", line)));
-  body.append(cues);
   if (letter.closing) body.append(createElement("p", "letter-closing", letter.closing));
 
   const signature = createElement("p", "signature", letter.signature);
@@ -197,9 +270,9 @@ function renderLetter() {
 
   const opening = createElement("div", "opening-control");
   if (state.unlocked) {
-    opening.append(createElement("p", "manuscript-opened", "The leaves are open."));
+    opening.append(createElement("p", "manuscript-opened", ui.manuscriptOpened));
   } else {
-    const openButton = createElement("button", "open-button", "Open the manuscript");
+    const openButton = createElement("button", "open-button", ui.openManuscript);
     openButton.type = "button";
     openButton.addEventListener("click", unlockManuscript);
     opening.append(openButton);
@@ -218,6 +291,7 @@ function createSequenceButton(label, onSelect, direction) {
 function renderPoem() {
   const poem = poemFor(state.activePoem);
   const chapter = chapterFor(poem.chapter);
+  const ui = interfaceText();
   const article = createElement("article", "document poem-document reading-enter");
 
   article.append(
@@ -235,11 +309,11 @@ function renderPoem() {
   article.append(poemBody);
 
   const sequence = createElement("nav", "reading-sequence");
-  sequence.setAttribute("aria-label", "Move through the manuscript");
+  sequence.setAttribute("aria-label", ui.moveThrough);
   const poemIndex = manuscript.poems.findIndex((entry) => entry.id === poem.id);
 
   if (poemIndex === 0) {
-    sequence.append(createSequenceButton("← Letter", () => selectLetter(), "previous"));
+    sequence.append(createSequenceButton(`← ${ui.letter}`, () => selectLetter(), "previous"));
   } else {
     const previous = manuscript.poems[poemIndex - 1];
     sequence.append(
@@ -248,7 +322,7 @@ function renderPoem() {
   }
 
   if (poemIndex === manuscript.poems.length - 1) {
-    sequence.append(createSequenceButton("Coda →", () => selectCoda(), "next"));
+    sequence.append(createSequenceButton(`${ui.coda} →`, () => selectCoda(), "next"));
   } else {
     const next = manuscript.poems[poemIndex + 1];
     sequence.append(createSequenceButton(`${next.title} →`, () => selectPoem(next.id), "next"));
@@ -260,11 +334,12 @@ function renderPoem() {
 
 function renderCoda() {
   const { coda, creatorNote } = manuscript;
+  const ui = interfaceText();
   const article = createElement("article", "document coda-document reading-enter");
   article.append(createElement("p", "document-meta", coda.archiveLabel));
 
   const heading = createElement("h1", "coda-title");
-  heading.append(createElement("span", "coda-prefix", "Coda"));
+  heading.append(createElement("span", "coda-prefix", ui.codaPrefix));
   heading.append(document.createTextNode(coda.title));
   article.append(heading);
 
@@ -300,7 +375,7 @@ function renderCoda() {
     const marker = outside.querySelector(".creator-note-marker");
     marker.textContent = outside.open ? "−" : "+";
     updateHash(outside.open ? creatorNote.id : "coda");
-    setReadingStatus(outside.open ? "Creator’s note opened." : "Creator’s note closed.");
+    setReadingStatus(outside.open ? ui.creatorOpened : ui.creatorClosed);
   });
   article.append(outside);
   if (creatorNoteLinked) {
@@ -308,7 +383,7 @@ function renderCoda() {
   }
 
   const sequence = createElement("nav", "reading-sequence");
-  sequence.setAttribute("aria-label", "Move through the manuscript");
+  sequence.setAttribute("aria-label", ui.moveThrough);
   const lastPoem = manuscript.poems[manuscript.poems.length - 1];
   sequence.append(
     createSequenceButton(`← ${lastPoem.title}`, () => selectPoem(lastPoem.id), "previous")
@@ -326,12 +401,19 @@ function renderReading() {
 }
 
 function buildPoemCard(poem, chapter) {
+  const ui = interfaceText();
   const button = createElement("button", "poem-card");
   button.type = "button";
   const isSelected = state.view === "poem" && state.activePoem === poem.id;
   button.classList.toggle("poem-card--active", isSelected);
   button.setAttribute("aria-pressed", String(isSelected));
-  button.setAttribute("aria-label", `Read ${poem.title}, poem ${String(poem.order).padStart(2, "0")}`);
+  button.setAttribute(
+    "aria-label",
+    formatText(ui.poemCardTemplate, {
+      title: poem.title,
+      order: String(poem.order).padStart(2, "0")
+    })
+  );
   button.addEventListener("click", () => selectPoem(poem.id));
 
   const image = document.createElement("img");
@@ -358,27 +440,28 @@ function buildPoemCard(poem, chapter) {
 }
 
 function renderShelf() {
+  const ui = interfaceText();
   shelfContent.replaceChildren();
 
   if (!state.unlocked) {
-    shelfTitle.textContent = "The manuscript";
-    shelfRange.textContent = "sealed";
+    shelfTitle.textContent = ui.shelfManuscript;
+    shelfRange.textContent = ui.sealed;
     const sealed = createElement("div", "shelf-note shelf-note--sealed");
     sealed.append(
       createElement("span", "shelf-rule", ""),
-      createElement("p", "", "Eleven leaves wait behind the letter."),
-      createElement("small", "", "Read Eileen’s note before disturbing their order.")
+      createElement("p", "", ui.sealedMessage),
+      createElement("small", "", ui.sealedHint)
     );
     shelfContent.append(sealed);
     return;
   }
 
   if (state.view === "letter") {
-    shelfTitle.textContent = "The manuscript";
+    shelfTitle.textContent = ui.shelfManuscript;
     shelfRange.textContent = "01—11";
     const ready = createElement("div", "shelf-note shelf-note--ready");
-    ready.append(createElement("p", "", "Three gatherings. Eleven short poems. One final postscript."));
-    const begin = createElement("button", "begin-link", "Begin with chapter I →");
+    ready.append(createElement("p", "", ui.readyMessage));
+    const begin = createElement("button", "begin-link", ui.beginChapter);
     begin.type = "button";
     begin.addEventListener("click", () => selectChapter(manuscript.chapters[0].id));
     ready.append(begin);
@@ -387,12 +470,12 @@ function renderShelf() {
   }
 
   if (state.view === "coda") {
-    shelfTitle.textContent = "Final leaf";
-    shelfRange.textContent = "complete";
+    shelfTitle.textContent = ui.finalLeaf;
+    shelfRange.textContent = ui.complete;
     const finalNote = createElement("div", "shelf-note shelf-note--coda");
     finalNote.append(
       createElement("p", "", manuscript.coda.shelfNote),
-      createElement("small", "", "A note from the maker waits beyond Eileen’s signature.")
+      createElement("small", "", ui.creatorWaits)
     );
     shelfContent.append(finalNote);
     return;
@@ -436,6 +519,9 @@ function moveFocusWithin(container, event) {
 
 chapterList.addEventListener("keydown", (event) => moveFocusWithin(chapterList, event));
 shelfContent.addEventListener("keydown", (event) => moveFocusWithin(shelfContent, event));
+languageButtons.forEach((button) => {
+  button.addEventListener("click", () => setLanguage(button.dataset.language));
+});
 
 function restoreLinkedPage() {
   const target = decodeURIComponent(window.location.hash.slice(1));
@@ -457,4 +543,5 @@ function restoreLinkedPage() {
 }
 
 restoreLinkedPage();
+applyLanguageChrome();
 render();

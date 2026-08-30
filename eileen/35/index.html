@@ -13,22 +13,29 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#reading-panel">Skip to the manuscript</a>
+    <a class="skip-link" id="skip-link" href="#reading-panel">Skip to the manuscript</a>
 
     <div class="page">
-      <header class="masthead" aria-label="Manuscript heading">
-        <p class="archive-mark" aria-label="Eileen manuscript 35">E. / MS. 35</p>
+      <header class="masthead" id="masthead" aria-label="Manuscript heading">
+        <p class="archive-mark" id="archive-mark" aria-label="Eileen manuscript 35">E. / MS. 35</p>
         <div class="publication-title">
-          <p>The Long Mystery</p>
-          <span>Eleven Short Poems and an Unwritten Postscript</span>
+          <p id="publication-title">The Long Mystery</p>
+          <span id="publication-subtitle">Eleven Short Poems and an Unwritten Postscript</span>
         </div>
-        <p class="copy-mark">Private copy · undated</p>
+        <div class="masthead-tools">
+          <p class="copy-mark" id="copy-mark">Private copy · undated</p>
+          <div class="language-switch" id="language-switch" role="group" aria-label="Language">
+            <button type="button" data-language="en" aria-pressed="true">EN</button>
+            <span aria-hidden="true">/</span>
+            <button type="button" data-language="zh" aria-pressed="false">中</button>
+          </div>
+        </div>
       </header>
 
       <div class="archive-shell" id="archive-shell">
-        <nav class="chapter-index" aria-label="Manuscript contents">
+        <nav class="chapter-index" id="chapter-index" aria-label="Manuscript contents">
           <div class="column-heading">
-            <span>Contents</span>
+            <span id="contents-label">Contents</span>
             <span aria-hidden="true">§</span>
           </div>
           <div class="chapter-list" id="chapter-list"></div>

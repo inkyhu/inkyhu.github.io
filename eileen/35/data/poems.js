@@ -1,3 +1,7 @@
+import { uiCopy, zhManuscript } from "./translations.js";
+
+export { uiCopy };
+
 export const manuscript = {
   title: "The Long Mystery",
   subtitle: "Eleven Short Poems and an Unwritten Postscript",
@@ -8,10 +12,10 @@ export const manuscript = {
     salutation: "To my two friends, who seem a little less far away now:",
     paragraphs: [
       "You found it.",
-      "The manuscript is not a novel, as you may have expected, but a small collection of poems. This is not an evasion. The poems are real, and the mystery surrounding them is real as well.",
-      "Read them first."
+      "I ought to confess that the manuscript is not a novel. It is a small collection of poems—eleven, to be exact. If the locked bookcase led you to expect something grander, I hope you will forgive it.",
+      "The poems are real, and they are the manuscript I promised. The mystery surrounding them is real as well.",
+      "Read them first. When you reach the final page, I shall explain why I needed both of you to find them."
     ],
-    cueLines: ["The last page will explain why I required two readers to reach the first."],
     signature: "— Eileen"
   },
   chapters: [
@@ -269,7 +273,7 @@ export const manuscript = {
         text: "But the poems are real, and they are yours to read. They are the manuscript I promised."
       },
       {
-        type: "pivot",
+        type: "paragraph",
         text: "The long mystery was the way I asked you to reach them."
       },
       {
@@ -281,7 +285,7 @@ export const manuscript = {
         text: "A record is no longer only music. A clock keeps more than time. A ticket may remember its departure after its destination has been rubbed away. A sheet of paper may contain a bird, provided another voice knows where it should be folded."
       },
       {
-        type: "pivot",
+        type: "paragraph",
         text: "So I made a book that began before its first page."
       },
       {
@@ -293,7 +297,7 @@ export const manuscript = {
         text: "You described, misheard, corrected, waited, and tried again. The numbers mattered, of course—but only because of what you had to give one another before they would appear."
       },
       {
-        type: "pivot",
+        type: "paragraph",
         text: "That was the part I could not write alone."
       },
       {
@@ -357,3 +361,37 @@ export const manuscript = {
     signature: "— Inky"
   }
 };
+
+export function getManuscript(language = "en") {
+  if (language !== "zh") return manuscript;
+
+  return {
+    ...manuscript,
+    title: zhManuscript.title,
+    subtitle: zhManuscript.subtitle,
+    letter: {
+      ...manuscript.letter,
+      ...zhManuscript.letter
+    },
+    chapters: manuscript.chapters.map((chapter) => ({
+      ...chapter,
+      ...zhManuscript.chapters[chapter.id]
+    })),
+    poems: manuscript.poems.map((poem) => ({
+      ...poem,
+      ...zhManuscript.poems[poem.id]
+    })),
+    coda: {
+      ...manuscript.coda,
+      ...zhManuscript.coda
+    },
+    physicalNote: {
+      ...manuscript.physicalNote,
+      ...zhManuscript.physicalNote
+    },
+    creatorNote: {
+      ...manuscript.creatorNote,
+      ...zhManuscript.creatorNote
+    }
+  };
+}

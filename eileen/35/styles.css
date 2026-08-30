@@ -10,8 +10,10 @@
   --line-soft: rgba(48, 47, 41, 0.1);
   --moss: #667166;
   --wine: #734c50;
-  --serif: "Iowan Old Style", "Baskerville", "Libre Baskerville", "Times New Roman", serif;
-  --sans: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Iowan Old Style", "Baskerville", "Libre Baskerville", "Songti SC", STSong,
+    "Source Han Serif SC", SimSun, "Times New Roman", serif;
+  --sans: "Avenir Next", Avenir, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial,
+    sans-serif;
 }
 
 * {
@@ -128,6 +130,45 @@ a:focus-visible {
 
 .copy-mark {
   text-align: right;
+}
+
+.masthead-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+}
+
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.language-switch button {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0.25rem;
+  color: var(--ink-faint);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.language-switch button:hover,
+.language-switch button[aria-pressed="true"] {
+  color: var(--ink);
+}
+
+.language-switch button[aria-pressed="true"] {
+  border-bottom-color: currentcolor;
 }
 
 .publication-title {
@@ -295,21 +336,10 @@ a:focus-visible {
 }
 
 .letter-document {
-  position: relative;
   padding: clamp(2.4rem, 5vw, 4.8rem) clamp(1.6rem, 5vw, 4.9rem) 3rem;
   background: rgba(249, 247, 240, 0.66);
   border-top: 1px solid rgba(255, 255, 255, 0.78);
   box-shadow: 0 1.5rem 5rem rgba(47, 43, 35, 0.055);
-}
-
-.letter-document::before {
-  position: absolute;
-  top: 1.2rem;
-  bottom: 1.2rem;
-  left: 1rem;
-  width: 1px;
-  content: "";
-  background: linear-gradient(transparent, rgba(115, 76, 80, 0.3) 12%, rgba(115, 76, 80, 0.3) 88%, transparent);
 }
 
 .letter-salutation {
@@ -331,18 +361,6 @@ a:focus-visible {
 
 .letter-body > p {
   margin: 0 0 1.35rem;
-}
-
-.letter-cues {
-  margin: 2.3rem 0;
-  padding-left: clamp(1rem, 5vw, 3.3rem);
-  border-left: 1px solid var(--wine);
-  font-size: 1.13em;
-  font-style: italic;
-}
-
-.letter-cues p {
-  margin: 0.18rem 0;
 }
 
 .letter-body .letter-closing {
@@ -506,14 +524,6 @@ a:focus-visible {
 
 .coda-block {
   margin: 0 0 1.45rem;
-}
-
-.coda-block--pivot {
-  margin: 2.7rem 0;
-  padding-left: 1.15rem;
-  border-left: 1px solid var(--wine);
-  font-size: 1.13rem;
-  font-style: italic;
 }
 
 .coda-block--closing {
@@ -778,6 +788,16 @@ a:focus-visible {
   animation: readingEnter 380ms ease both;
 }
 
+.language-zh .letter-body,
+.language-zh .coda-body {
+  line-height: 1.95;
+}
+
+.language-zh .poem-body {
+  letter-spacing: 0.035em;
+  line-height: 1.9;
+}
+
 @keyframes readingEnter {
   from {
     opacity: 0;
@@ -812,16 +832,25 @@ a:focus-visible {
 
   .masthead {
     min-height: 6.4rem;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 1rem;
   }
 
   .publication-title {
-    text-align: right;
+    text-align: center;
   }
 
   .copy-mark {
     display: none;
+  }
+
+  .masthead-tools {
+    align-self: center;
+  }
+
+  .language-switch button {
+    min-width: 2.25rem;
+    min-height: 2.75rem;
   }
 
   .archive-shell {
@@ -928,6 +957,11 @@ a:focus-visible {
     padding-top: 1.3rem;
   }
 
+  .masthead-tools {
+    align-self: start;
+    padding-top: 0.85rem;
+  }
+
   .publication-title p {
     font-size: 0.65rem;
     letter-spacing: 0.13em;
@@ -943,16 +977,8 @@ a:focus-visible {
     padding: 2.4rem 1.3rem 2rem 1.65rem;
   }
 
-  .letter-document::before {
-    left: 0.65rem;
-  }
-
   .letter-salutation {
     margin-bottom: 2.2rem;
-  }
-
-  .letter-cues {
-    padding-left: 0.85rem;
   }
 
   .poem-title,
