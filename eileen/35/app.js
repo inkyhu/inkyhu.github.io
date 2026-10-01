@@ -17,10 +17,14 @@ const chapterIndex = document.querySelector("#chapter-index");
 const languageSwitch = document.querySelector("#language-switch");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
 const descriptionMeta = document.querySelector('meta[name="description"]');
+const backgroundMusic = document.querySelector("#background-music");
+const musicToggle = document.querySelector("#music-toggle");
+const musicToggleLabel = document.querySelector("#music-toggle-label");
 
 const requestedLanguage = new URLSearchParams(window.location.search).get("lang");
 const initialLanguage = requestedLanguage === "zh" ? "zh" : "en";
 let manuscript = getManuscript(initialLanguage);
+let musicWasPaused = false;
 
 const state = {
   language: initialLanguage,
@@ -41,6 +45,25 @@ function formatText(template, values) {
   );
 }
 
+function updateMusicControl() {
+  const ui = interfaceText();
+  const isPlaying = !backgroundMusic.paused;
+  musicToggle.setAttribute("aria-pressed", String(isPlaying));
+  musicToggle.setAttribute("aria-label", isPlaying ? ui.pauseMusic : ui.playMusic);
+  musicToggleLabel.textContent = isPlaying ? ui.musicPauseLabel : ui.musicPlayLabel;
+}
+
+async function playBackgroundMusic(announce = false) {
+  try {
+    await backgroundMusic.play();
+    musicWasPaused = false;
+    updateMusicControl();
+    if (announce) setReadingStatus(interfaceText().musicPlaying);
+  } catch {
+    updateMusicControl();
+  }
+}
+
 function applyLanguageChrome() {
   const ui = interfaceText();
   document.documentElement.lang = ui.lang;
@@ -57,6 +80,7 @@ function applyLanguageChrome() {
   contentsLabel.textContent = ui.contents;
   chapterIndex.setAttribute("aria-label", ui.contentsLabel);
   languageSwitch.setAttribute("aria-label", ui.languageLabel);
+  updateMusicControl();
 
   languageButtons.forEach((button) => {
     const language = button.dataset.language;
@@ -523,6 +547,31 @@ languageButtons.forEach((button) => {
   button.addEventListener("click", () => setLanguage(button.dataset.language));
 });
 
+musicToggle.addEventListener("click", () => {
+  if (backgroundMusic.paused) {
+    playBackgroundMusic(true);
+    return;
+  }
+
+  musicWasPaused = true;
+  backgroundMusic.pause();
+  updateMusicControl();
+  setReadingStatus(interfaceText().musicPaused);
+});
+
+backgroundMusic.addEventListener("play", updateMusicControl);
+backgroundMusic.addEventListener("pause", updateMusicControl);
+
+function beginMusicAfterInteraction(event) {
+  const usedMusicToggle =
+    event.target instanceof Element && event.target.closest("#music-toggle");
+  if (musicWasPaused || !backgroundMusic.paused || usedMusicToggle) return;
+  playBackgroundMusic();
+}
+
+document.addEventListener("pointerdown", beginMusicAfterInteraction, { passive: true });
+document.addEventListener("keydown", beginMusicAfterInteraction);
+
 function restoreLinkedPage() {
   const target = decodeURIComponent(window.location.hash.slice(1));
   const linkedPoem = poemFor(target);
@@ -543,5 +592,7 @@ function restoreLinkedPage() {
 }
 
 restoreLinkedPage();
+backgroundMusic.volume = 0.28;
 applyLanguageChrome();
 render();
+playBackgroundMusic();

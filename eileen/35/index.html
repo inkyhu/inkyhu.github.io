@@ -24,10 +24,22 @@
         </div>
         <div class="masthead-tools">
           <p class="copy-mark" id="copy-mark">Private copy · undated</p>
-          <div class="language-switch" id="language-switch" role="group" aria-label="Language">
-            <button type="button" data-language="en" aria-pressed="true">EN</button>
-            <span aria-hidden="true">/</span>
-            <button type="button" data-language="zh" aria-pressed="false">中</button>
+          <div class="masthead-controls">
+            <button
+              class="music-toggle"
+              id="music-toggle"
+              type="button"
+              aria-label="Play background music"
+              aria-pressed="false"
+            >
+              <span aria-hidden="true">♪</span>
+              <span id="music-toggle-label">PLAY</span>
+            </button>
+            <div class="language-switch" id="language-switch" role="group" aria-label="Language">
+              <button type="button" data-language="en" aria-pressed="true">EN</button>
+              <span aria-hidden="true">/</span>
+              <button type="button" data-language="zh" aria-pressed="false">中</button>
+            </div>
           </div>
         </div>
       </header>
@@ -54,6 +66,13 @@
     </div>
 
     <div class="visually-hidden" id="reading-status" role="status" aria-live="polite"></div>
+    <audio
+      id="background-music"
+      src="./assets/audio/schumann-traumerei.ogg"
+      autoplay
+      loop
+      preload="auto"
+    ></audio>
     <noscript>
       <p class="noscript-note">This manuscript requires JavaScript to arrange its pages.</p>
     </noscript>

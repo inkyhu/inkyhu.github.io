@@ -139,6 +139,39 @@ a:focus-visible {
   gap: 0.55rem;
 }
 
+.masthead-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.music-toggle {
+  min-height: 1.75rem;
+  padding: 0.25rem 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink-faint);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.music-toggle:hover,
+.music-toggle[aria-pressed="true"] {
+  color: var(--ink);
+}
+
+.music-toggle[aria-pressed="true"] {
+  border-bottom-color: currentcolor;
+}
+
 .language-switch {
   display: inline-flex;
   align-items: center;
@@ -853,6 +886,10 @@ a:focus-visible {
     min-height: 2.75rem;
   }
 
+  .music-toggle {
+    min-height: 2.75rem;
+  }
+
   .archive-shell {
     display: flex;
     flex-direction: column;
@@ -960,6 +997,10 @@ a:focus-visible {
   .masthead-tools {
     align-self: start;
     padding-top: 0.85rem;
+  }
+
+  .masthead-controls {
+    gap: 0.45rem;
   }
 
   .publication-title p {

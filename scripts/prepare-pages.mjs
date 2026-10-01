@@ -24,6 +24,11 @@ if (existsSync(outDir)) {
 mkdirSync(portfolioDir, { recursive: true });
 cpSync(distDir, portfolioDir, { recursive: true });
 cpSync(join(portfolioDir, "index.html"), join(portfolioDir, "404.html"));
+for (const projectId of ["where-things-settle", "the-unwritten-postscript"]) {
+  const projectDir = join(portfolioDir, "project", projectId);
+  mkdirSync(projectDir, { recursive: true });
+  cpSync(join(portfolioDir, "index.html"), join(projectDir, "index.html"));
+}
 mkdirSync(eileenOutputDir, { recursive: true });
 cpSync(eileenSourceDir, eileenOutputDir, { recursive: true });
 
@@ -49,4 +54,5 @@ writeFileSync(join(outDir, ".nojekyll"), "", "utf8");
 console.log("Pages artifact prepared at out/");
 console.log("- out/index.html (redirect -> /Portfolio/)");
 console.log("- out/Portfolio/ (app build)");
+console.log("- out/Portfolio/project/ (direct project links)");
 console.log("- out/eileen/35/ (hidden manuscript)");

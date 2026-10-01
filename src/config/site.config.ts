@@ -1,7 +1,7 @@
 export const siteConfig = {
   siteName: "Inky",
-  browserTitle: "Inky's Portfolio",
-  role: "Game Designer & Programmer",
+  browserTitle: "Inky Hu — Game & Interaction Design",
+  role: "Game & Interaction Designer",
   tagline:
     "Under Development",
   contact: {
